@@ -31,7 +31,7 @@ class Spamtitan(object):
     more information.
     :param domaingroup: Domain Group to add domain to.
     '''
-    url = '%s/domain/delete?name=%s' % (self.base_url, domain_name)
+    url = '%s/domain/edit?name=%s' % (self.base_url, domain_name)
     
     if server:
       url += '&server=%s' % server
