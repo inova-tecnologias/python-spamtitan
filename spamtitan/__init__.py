@@ -1,0 +1,1 @@
+from spamtitan import Spamtitan

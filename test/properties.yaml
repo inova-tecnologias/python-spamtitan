@@ -1,0 +1,14 @@
+# general settings
+host: 192.168.0.100
+domain: 'mock.com.br'
+relay: 'mymailserver.com:26'
+
+
+# ldap recipient verification
+ldap_server: 'ldap.inova.com.br'
+ldap_port: 389
+ldap_search_dn: 'uid=sync,ou=people,dc=inova,dc=com,dc=br'
+ldap_password: 'supersecret'
+ldap_filter: 'mail=%s'
+ldap_searchbase: 'dc=inova,dc=br'
+ldap_result_attribute: 'uid'
