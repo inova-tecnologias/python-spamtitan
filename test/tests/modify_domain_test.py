@@ -36,8 +36,6 @@ class ModifyDomain(TestCase, BaseTest):
                         )
     if not r.status_code == 200:
       self.assertTrue(False)
-    #
-
 
 if __name__ == "__main__":
   unittest.main()
