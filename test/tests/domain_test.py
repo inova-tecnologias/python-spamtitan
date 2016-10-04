@@ -10,7 +10,7 @@ requests.packages.urllib3.disable_warnings(
     .exceptions
     .InsecureRequestWarning)
 
-class ModifyDomain(TestCase, BaseTest):
+class DomainTest(TestCase, BaseTest):
   # ------------------------------------------------------------------ unbound
   def setUp(self):
     # BEFORE RUN TESTS
