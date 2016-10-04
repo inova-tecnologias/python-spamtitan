@@ -48,3 +48,14 @@ if __name__ == '__main__':
                         ldap_result_attribute=stcfg['ldap_result_attribute']
                         )
     print r.status_code
+
+    r = st.edit_policy(user=row['domain'],
+                        spam_tag2_level=5,
+                        spam_quarantine_to='',
+                        spam_lover='Y',
+                        virus_quarantine_to='',
+                        digest='D', # quarantine report daily
+                        report_type='Y', # new items since last report, except virus
+                        digest_language='pt_BR'
+                        )
+    print r.status_code
