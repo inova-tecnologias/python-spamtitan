@@ -40,3 +40,19 @@ r = st.delete_domain(domain_name='mock.com')
 
 print r.text, r.status_code
 ```
+
+## Edit Policy
+```python
+from spamtitan import Spamtitan
+
+st = Spamtitan(host='192.168.6.100')
+r = st.edit_policy(user='mock.com',
+                        spam_tag2_level=4.5,
+                        spam_quarantine_to='',
+                        spam_lover='Y',
+                        virus_quarantine_to='',
+                        digest='D', # quarantine report daily
+                        report_type='Y', # new items since last report, except virus
+                        digest_language='pt_BR'
+                        )
+```                        
