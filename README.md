@@ -1,5 +1,15 @@
 # Python Spamtitan
-Python class to manage Spamtitan Cluster.
+
+1. [Domains](#domains)
+    1. [Create Domain](#create-domain)
+    2. [Edit Domain](#edit-domain)
+    3. [Delete Domain](#delete-domain)
+1. [Policies](#policies)
+    1. [Edit Policy](#edit-policy)
+
+
+# Domains
+Methods to manage Domains
 
 ## Create Domain
 ```python
@@ -40,6 +50,9 @@ r = st.delete_domain(domain_name='mock.com')
 
 print r.text, r.status_code
 ```
+
+# Policies
+Methods to manage policies
 
 ## Edit Policy
 ```python
