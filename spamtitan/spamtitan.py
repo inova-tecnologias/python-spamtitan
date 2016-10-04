@@ -5,10 +5,66 @@ class Spamtitan(object):
   def __init__(self, host):
     self.base_url = 'http://%s' % host
   
-  def edit_domain(self, domain_name, server=None, rv=None, dyn_server=None, ldap_server=None,
-                  ldap_port=None, ldap_search_dn=None, ldap_password=None, ldap_filter=None,
-                  ldap_searchbase=None, ldap_result_attribute=None, email=None, delemail=None, 
-                  domaingroup=None):
+  def edit_policy(self, user, **kwargs):
+    """ Edit user/domain policy
+    param:user: Username or Domain to edit policy.
+    param:virus_lover: Specifies if virus infected files should be passed for this user (Y/N). Default N.
+    param:spam_lover: Specifies if messages exceeding the spam threshold should be passed for this
+                        user (Y/N). Default N.
+    param:banned_files_lover: Specifies if messages containing banned attachment should be passed
+                              for this user (Y/N). Default N.
+    param:bad_header_lover: Specifies if messages containing banned attachment should be passed
+                            for this user (Y/N). Default N.
+    param:bypass_virus_checks: Specifies if virus checking should be disabled for this user (Y/N).
+                               Default N.
+    param:bypass_spam_checks: Specifies if spam checking should be disabled for this user (Y/N).
+                              Default N.
+    param:bypass_banned_checks: Specifies if banned attachment checking should be disabled for this
+                                user (Y/N). Default N.
+    param:bypass_header_checks: Specifies if header checks are bypassed for this user (Y/N). Default
+                                N.
+    param:spam_modifies_subj: Specifies if the mail subject is changed when spam is detected for this
+                              u ser (Y/N). Default N.
+    param:spam_tag_level; Add spam score headers to mail when score is greater than or
+                          equal. Default: 999. Type: float
+    param:spam_tag2_level; Specifies the threshold over which messages will be considered spam.
+                            Default: 5. Type: float
+    param:spam_kill_level; Quarantine or discard spam when score is greater than or equal to.
+                            Default: 5. Type: float
+    param:report_kill_level; Specifies the threshold over which mail will be included in reports. Default:
+                              999. Type: float
+    param:spam_dsn_cutoff_level; Spam score at which not to generate delivery status notifications..
+                                 Default: 0. Type: float
+    param:spam_quarantine_cutoff_level; Score at which not to quarantine. Default: 999. Type: float
+    param:spam_quarantine_to: Specifies how to deal with spam mail. (Default) spam-quarantine to
+                                quarantine mail, set to **nothing** to reject. Set to *nothing* and set spam_lover to 
+                                Y to Pass and Tag mail.
+    param:virus_quarantine_to: Specifies how to deal with virus mail. (Default) virus-quarantine to
+                                quarantine mail, set to *nothing* to reject. Set to *nothing* and set virus_lover 
+                                to Y to Pass and Tag mail.
+    param:banned_quarantine_to: Specifies how to deal with banned attachment mail. (Default)
+                                banned-quarantine to quarantine mail, set to  to reject. Set to  and set
+                                banned_files_lover to Y to Pass and Tag mail.
+    param:locked: Specifies if the policy is locked. If a policy is locked, changes to the domain policy will
+                  not be inherited by the locked user policy (Y/N). Default: N.
+    param:digest: Specifies if this user should receive a quarantine report. N=Never, D=Daily,
+                    WD=Week Days, M=Monthly. Default N.
+    param:report_type: Specifies the type of quarantine report to send the user. Possible values are N
+                        (New items since last report only) , A (all quarantine messages), X (All quarantined msgs,
+                        except viruses), Y (New items since last report, except viruses). Default N.
+    param:digest_language: Specifies the language that the report should be generated in
+                            (cs_CZ/da_DK/de_DE/en_US/fr_FR/nl_NL/ja_JP/it_IT/pl_PL/es_ES). Default: en_US
+    """
+    url = '%s/policy/edit?user=%s' % (self.base_url, user)
+    for attribute, value in kwargs.iteritems():
+      aurl = '&attribute=%s&value=%s' % (attribute, value)
+      r = requests.get(url+aurl)
+      if r.status_code == 200:
+        Exception('Error %s:%s' % (url, r.text))
+    
+    return r
+
+  def edit_domain(self, domain_name, **kwargs):                  
     ''' Modify settings for a particular domain.
     :param domain_name: Required. The name of the Domain to add
     :param server: Optional. The new destination server IP address or FQDN for this domain
@@ -32,34 +88,8 @@ class Spamtitan(object):
     :param domaingroup: Domain Group to add domain to.
     '''
     url = '%s/domain/edit?name=%s' % (self.base_url, domain_name)
-    
-    if server:
-      url += '&server=%s' % server
-    if rv:
-      url += '&rv=%s' % rv
-    if dyn_server:
-      url += '&dyn_server=%s' % dyn_server
-    if ldap_server:
-      url += '&ldap_server=%s' % ldap_server
-    if ldap_port:
-      url += '&ldap_port=%s' % ldap_port
-    if ldap_search_dn:
-      url += '&ldap_search_dn=%s' % ldap_search_dn
-    if ldap_password:
-      url += '&ldap_password=%s' % ldap_password
-    if ldap_filter:
-      url += '&ldap_filter=%s' % ldap_filter
-    if ldap_searchbase:
-      url += '&ldap_searchbase=%s' % ldap_searchbase
-    if ldap_result_attribute:
-      url += '&ldap_result_attribute=%s' % ldap_result_attribute
-    if email:
-      url += '&email=%s' % email
-    if delemail:
-      url += '&delemail=%s' % delemail
-    if domaingroup:
-      url += '&domaingroup=%s' % domaingroup
-
+    for attribute, value in kwargs.iteritems():
+      url += '&%s=%s' % (attribute, value)
     r = requests.get(url)
     if r.status_code == 200:
      Exception('Error %s:%s' % (url, r.text))
