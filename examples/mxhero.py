@@ -35,35 +35,42 @@ if __name__ == '__main__':
   con.execute(query)
   res = con.fetchall()
   for row in res:
-    print 'creating domain %s' % row['domain']
-    st.create_domain(domain_name=row['domain'], relay=stcfg['relay'])
-    r = st.edit_domain(domain_name=row['domain'],
-                        rv='ldap',
-                        ldap_server=stcfg['ldap_server'],
-                        ldap_port=stcfg['ldap_port'],
-                        ldap_search_dn=stcfg['ldap_search_dn'],
-                        ldap_password=stcfg['ldap_password'],
-                        ldap_filter=stcfg['ldap_filter'],
-                        ldap_searchbase=stcfg['ldap_searchbase'],
-                        ldap_result_attribute=stcfg['ldap_result_attribute']
-                        )
-    print r.status_code
+    try:
+      print 'creating domain %s' % row['domain']
+      st.create_domain(domain_name=row['domain'], relay=stcfg['relay'])
+      r = st.edit_domain(domain_name=row['domain'],
+                          rv='ldap',
+                          ldap_server=stcfg['ldap_server'],
+                          ldap_port=stcfg['ldap_port'],
+                          ldap_search_dn=stcfg['ldap_search_dn'],
+                          ldap_password=stcfg['ldap_password'],
+                          ldap_filter=stcfg['ldap_filter'],
+                          ldap_searchbase=stcfg['ldap_searchbase'],
+                          ldap_result_attribute=stcfg['ldap_result_attribute']
+                          )
+      print r.status_code
 
-    r = st.edit_policy(user=row['domain'],
-                        spam_tag2_level=5,
-                        spam_quarantine_to='',
-                        spam_lover='Y',
-                        virus_quarantine_to='',
-                        digest='D', # quarantine report daily
-                        report_type='Y', # new items since last report, except virus
-                        digest_language='pt_BR'
-                        )
-    print r.status_code
+      r = st.edit_policy(user=row['domain'],
+                          spam_tag2_level=5,
+                          spam_quarantine_to='',
+                          spam_lover='Y',
+                          virus_quarantine_to='',
+                          digest='D', # quarantine report daily
+                          report_type='Y', # new items since last report, except virus
+                          digest_language='pt_BR'
+                          )
+      print r.status_code
+    except Exception, e:
+      print 'Error: %s' % e
+      
   query = "SELECT domain_id, property_value FROM features_rules INNER JOIN features_rules_properties \
           ON features_rules.id = features_rules_properties.rule_id WHERE \
           features_rules.feature_id=15 AND property_key='email.list'"
   con.execute(query)
   res = con.fetchall()
   for row in res:
-    print 'domain:%s whitelisting:%s' % (row['domain_id'], row['property_value'])
-    st.add_whitelist(user=row['domain_id'], sender=row['property_value'])  
+    try:
+      print 'domain:%s whitelisting:%s' % (row['domain_id'], row['property_value'])
+      st.add_whitelist(user=row['domain_id'], sender=row['property_value'])
+    except Exception, e:
+      print 'Error: %s' % e
