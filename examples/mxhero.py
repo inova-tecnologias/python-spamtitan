@@ -59,3 +59,11 @@ if __name__ == '__main__':
                         digest_language='pt_BR'
                         )
     print r.status_code
+  query = "SELECT domain_id, property_value FROM features_rules INNER JOIN features_rules_properties \
+          ON features_rules.id = features_rules_properties.rule_id WHERE \
+          features_rules.feature_id=15 AND property_key='email.list'"
+  con.execute(query)
+  res = con.fetchall()
+  for row in res:
+    print 'domain:%s whitelisting:%s' % (row['domain_id'], row['property_value'])
+    st.add_whitelist(user=row['domain_id'], sender=row['property_value'])  
