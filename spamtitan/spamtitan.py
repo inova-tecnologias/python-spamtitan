@@ -5,6 +5,57 @@ class Spamtitan(object):
   def __init__(self, host):
     self.base_url = 'http://%s' % host
   
+  
+  def list_whitelist(self, user=None):
+    """ List Whitelisted Addresses and Domains
+    param:user: Optional. The email address or domain name of the user/domain for which 
+                to view the whitelist
+    """
+    url = '%s/whitelist/list' % (self.base_url)
+
+    if user:
+      url += '?user=%s' % user
+
+    r = requests.get(url)
+    if r.status_code == 200:
+     Exception('Error %s:%s' % (url, r.text))
+    
+    return r
+
+  def add_whitelist(self, sender, user=None):
+    """ Whitelist a sender
+    param:sender: Required. The email address or domain to add to the whitelist
+    param:user: Optional. The email address or domain name of the whitelist entry to add. 
+                If no user is specified, then the entry will be added to the global whitelist.
+    """
+    url = '%s/whitelist/add?sender=%s' % (self.base_url, sender)
+
+    if user:
+      url += '&user=%s' % user
+
+    r = requests.get(url)
+    if r.status_code == 200:
+     Exception('Error %s:%s' % (url, r.text))
+
+    return r
+  
+  def remove_whitelist(self, sender, user=None):
+    """ Remove Whitelist sender
+    param:sender: Required. The email address or domain to add to the whitelist
+    param:user: Optional. The email address or domain name of the whitelist entry to add. 
+                If no user is specified, then the entry will be added to the global whitelist.
+    """
+    url = '%s/whitelist/delete?sender=%s' % (self.base_url, sender)
+
+    if user:
+      url += '&user=%s' % user
+
+    r = requests.get(url)
+    if r.status_code == 200:
+     Exception('Error %s:%s' % (url, r.text))
+
+    return r
+
   def edit_policy(self, user, **kwargs):
     """ Edit user/domain policy
     param:user: Username or Domain to edit policy.
