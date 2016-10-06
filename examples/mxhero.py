@@ -6,13 +6,16 @@ The following script import mxhero domains to SpamTitan Cluster.
 '''
 # Config
 stcfg = {
-  'host' : '192.168.99.102',
-  'relay' : 'mxhero.server.com',
-  'ldap_server' : 'ldap.local',
+  'api' : '192.168.99.100',
+  'relay' : 'mxhero.server.com'
+}
+
+default_rv = {
+  'ldap_server' : 'zimbra.ldap',
   'ldap_port' : 389,
   'ldap_search_dn' : 'uid=zimbra,cn=admins,cn=zimbra',
   'ldap_password' : 'supersecretpass',
-  'ldap_filter' : 'mail=%s',
+  'ldap_filter' : '(|(zimbraMailDeliveryAddress=%s)(zimbraMailAlias=%s)(zimbraMailCatchAllAddress=%s)(mail=%s))',
   'ldap_searchbase' : '',
   'ldap_result_attribute' : 'uid'
 }
@@ -25,12 +28,13 @@ mxh = {
 }
 
 if __name__ == '__main__':
-  st = Spamtitan(host=stcfg['host'])
+  st = Spamtitan(host=stcfg['api'])
 
   con = mdb.connect(user=mxh['db_user'], db=mxh['db_name'], passwd=mxh['db_pass'],
                     host=mxh['db_host'], port=mxh['db_port'])
   con = con.cursor(mdb.cursors.DictCursor)
-  query = 'SELECT domain FROM domain'
+  query = 'SELECT domain.domain, address, port, user, password FROM domain_adldap \
+           RIGHT JOIN domain ON domain.domain = domain_adldap.domain'
 
   con.execute(query)
   res = con.fetchall()
@@ -40,13 +44,13 @@ if __name__ == '__main__':
       st.create_domain(domain_name=row['domain'], relay=stcfg['relay'])
       r = st.edit_domain(domain_name=row['domain'],
                           rv='ldap',
-                          ldap_server=stcfg['ldap_server'],
-                          ldap_port=stcfg['ldap_port'],
-                          ldap_search_dn=stcfg['ldap_search_dn'],
-                          ldap_password=stcfg['ldap_password'],
-                          ldap_filter=stcfg['ldap_filter'],
-                          ldap_searchbase=stcfg['ldap_searchbase'],
-                          ldap_result_attribute=stcfg['ldap_result_attribute']
+                          ldap_server=row.get('address') or default_rv['ldap_server'],
+                          ldap_port=row.get('port') or default_rv['ldap_port'],
+                          ldap_search_dn=row.get('user') or default_rv['ldap_search_dn'],
+                          ldap_password=row.get('password') or default_rv['ldap_password'],
+                          ldap_filter=default_rv['ldap_filter'],
+                          ldap_searchbase=default_rv['ldap_searchbase'],
+                          ldap_result_attribute=default_rv['ldap_result_attribute']
                           )
       print r.status_code
 
