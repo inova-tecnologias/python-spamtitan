@@ -1,15 +1,24 @@
 # Python Spamtitan
 
-1. [Domains](#domains)
+1. [Install](#Install)
+2. [Domains](#domains)
     1. [Create Domain](#create-domain)
     2. [Edit Domain](#edit-domain)
     3. [Delete Domain](#delete-domain)
-2. [Policies](#policies)
+3. [Policies](#policies)
     1. [Edit Policy](#edit-policy)
-3. [WhiteList](#whitelist)
+4. [WhiteList](#whitelist)
     1. [List WhiteList](#list-whitelist)
     2. [Add WhiteList](#add-whitelist)
     3. [Remove WhiteList](#remove-whitelist)
+
+# Install
+```bash
+$ git clone https://github.com/inova-tecnologias/python-spamtitan.git
+$ python setup.py install 
+```
+
+Import and use it
 
 ```python
 from spamtitan import Spamtitan
