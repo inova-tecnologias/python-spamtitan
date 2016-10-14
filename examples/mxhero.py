@@ -15,9 +15,9 @@ default_rv = {
   'ldap_port' : 389,
   'ldap_search_dn' : 'uid=zimbra,cn=admins,cn=zimbra',
   'ldap_password' : 'supersecretpass',
-  'ldap_filter' : '(|(zimbraMailDeliveryAddress=%s)(zimbraMailAlias=%s)(zimbraMailCatchAllAddress=%s)(mail=%s))',
+  'ldap_filter' : "(%26(|(zimbraMailDeliveryAddress=%s)(zimbraMailAlias=%s))(zimbraMailStatus=enabled))",
   'ldap_searchbase' : '',
-  'ldap_result_attribute' : 'uid'
+  'ldap_result_attribute' : 'zimbraId'
 }
 mxh = {
   'db_host' : '192.168.99.103',
@@ -49,7 +49,7 @@ if __name__ == '__main__':
                           ldap_search_dn=row.get('user') or default_rv['ldap_search_dn'],
                           ldap_password=row.get('password') or default_rv['ldap_password'],
                           ldap_filter=default_rv['ldap_filter'],
-                          ldap_searchbase=default_rv['ldap_searchbase'],
+                          ldap_searchbase='dc=' + row['domain'].replace('.',',dc='),
                           ldap_result_attribute=default_rv['ldap_result_attribute']
                           )
       print r.status_code
